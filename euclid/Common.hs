@@ -1,3 +1,5 @@
+-- Copyright (c) 2012 Jarosław Skrzypek
+
 module Common where
 
 import System.Environment

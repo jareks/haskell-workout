@@ -1,3 +1,5 @@
+-- Copyright (c) 2012 Jarosław Skrzypek
+
 import System.Environment
 import Test.HUnit
 import Common

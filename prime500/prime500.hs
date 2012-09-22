@@ -1,3 +1,5 @@
+-- Copyright (c) 2012 Jarosław Skrzypek
+
 import Debug.Trace
 
 main = do
