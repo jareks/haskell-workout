@@ -1,26 +1,55 @@
 -- Copyright (c) 2012 Jarosław Skrzypek
 
+import System.Environment
 import Debug.Trace
+import Test.HUnit
+import Common
 
 main = do
-  print (get_primes 500) 
+  args <- getArgs
+  runTestsOrInteractive args runTests runInteractive
   return ()
 
-get_primes :: (Show a, Integral a) => a -> [a]
-get_primes 1 = [2]
-get_primes 2 = [2,3]
-get_primes n = 
-  foldl (\primes i -> primes ++ [(next_prime primes)]) (get_primes 2) [2..n]
+getPrimes :: (Show a, Integral a) => a -> [a]
+getPrimes 1 = [2]
+getPrimes 2 = [2,3]
+getPrimes n =
+  foldl (\primes i -> primes ++ [nextPrime primes]) (getPrimes 2) [2..n]
 
-next_prime :: (Show a, Integral a) => [a] -> a
---next_prime primes | trace ("next_prime " ++ show primes) False = undefined
-next_prime primes = let
+nextPrime :: (Show a, Integral a) => [a] -> a
+--nextPrime primes | trace ("nextPrime " ++ show primes) False = undefined
+nextPrime primes = let
     last_prime = last primes
   in
-    head $ filter (\num -> is_prime primes num) [last_prime, last_prime + 2..]
+    head $ filter (isPrime primes) [last_prime + 2, last_prime + 4..]
 
-is_prime :: (Integral a) => (Show a) => [a] -> a -> Bool
-is_prime primes n =
-  foldl (\acc prime -> (if n `mod` prime == 0 then False else acc)) True primes
-    
-  
+isPrime :: (Integral a, Show a) => [a] -> a -> Bool
+--isPrime primes n | trace ("isPrime " ++ show primes ++ " n " ++ show n) False = undefined
+isPrime primes n = let
+    sqrtN = ceiling . sqrt . fromIntegral $ n
+    primesToCheck = takeWhile (<= sqrtN) primes
+  in
+    foldl (\acc prime -> (if n `mod` prime == 0 then False else acc)) True primesToCheck
+
+runInteractive =
+  print $ getPrimes 500
+
+runTests = do
+  runTestTT $ TestList [test1, test2, test500]
+  return ()
+
+test1 = TestCase $ assertEqual
+  "First prime should be 2"
+  2
+  (last $ getPrimes 1)
+
+test2 = TestCase $ assertEqual
+  "Second prime should be 3"
+  3
+  (last $ getPrimes 2)
+
+test500 = TestCase $ assertEqual
+  "500 prime should be 3581"
+  3581
+  (last $ getPrimes 500)
+

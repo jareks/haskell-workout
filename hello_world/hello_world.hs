@@ -1,4 +1,4 @@
 -- Copyright (c) 2012 Jarosław Skrzypek
 
-main = do
+main =
   putStrLn "Hello World"
